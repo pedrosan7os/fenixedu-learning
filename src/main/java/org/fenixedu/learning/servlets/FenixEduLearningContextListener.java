@@ -32,12 +32,12 @@ import org.fenixedu.academic.service.services.manager.MergeExecutionCourses;
 import org.fenixedu.academic.service.services.teacher.PublishMarks;
 import org.fenixedu.academic.service.services.teacher.PublishMarks.MarkPublishingBean;
 import org.fenixedu.academic.util.Bundle;
-import org.fenixedu.bennu.core.groups.AnyoneGroup;
+import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.core.security.Authenticate;
+import org.fenixedu.bennu.core.signals.DomainObjectEvent;
+import org.fenixedu.bennu.core.signals.Signal;
 import org.fenixedu.bennu.io.domain.GroupBasedFile;
-import org.fenixedu.bennu.signals.DomainObjectEvent;
-import org.fenixedu.bennu.signals.Signal;
 import org.fenixedu.cms.domain.Category;
 import org.fenixedu.cms.domain.Menu;
 import org.fenixedu.cms.domain.MenuItem;
@@ -69,7 +69,7 @@ public class FenixEduLearningContextListener implements ServletContextListener {
         });
         FenixFramework.getDomainModel().registerDeletionListener(Summary.class, (summary) -> {
             Post post = summary.getPost();
-            if(post!=null) {
+            if (post != null) {
                 summary.setPost(null);
                 post.delete();
             }
@@ -251,13 +251,13 @@ public class FenixEduLearningContextListener implements ServletContextListener {
             for (int i = 0; i < oldPost.getAttachments().getFiles().size(); ++i) {
                 GroupBasedFile file = oldPost.getAttachments().getFiles().get(i);
                 GroupBasedFile attachmentCopy =
-                        new GroupBasedFile(file.getDisplayName(), file.getFilename(), file.getContent(), AnyoneGroup.get());
+                        new GroupBasedFile(file.getDisplayName(), file.getFilename(), file.getContent(), Group.anyone());
                 newPost.getAttachments().putFile(attachmentCopy, i);
             }
 
             for (GroupBasedFile file : oldPost.getPostFiles().getFiles()) {
                 GroupBasedFile postFileCopy =
-                        new GroupBasedFile(file.getDisplayName(), file.getFilename(), file.getContent(), AnyoneGroup.get());
+                        new GroupBasedFile(file.getDisplayName(), file.getFilename(), file.getContent(), Group.anyone());
                 newPost.getPostFiles().putFile(postFileCopy);
             }
             return newPost;
