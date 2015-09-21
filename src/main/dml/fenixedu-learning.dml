@@ -1,28 +1,76 @@
 package org.fenixedu.learning.domain;
 
+enum org.fenixedu.learning.domain.executionCourse.ShiftType as ShiftType;
 
-class executionCourse.ExecutionCourseSite extends .org.fenixedu.cms.domain.Site {}
-class degree.DegreeSite extends .org.fenixedu.cms.domain.Site {}
+class executionCourse.ExecutionCourseSite extends .org.fenixedu.cms.domain.Site {
+    protected String executionCourseId;
+    String comment;
+    boolean lessonPlanningAvailable;
+}
+
+class executionCourse.BibliographicReference {
+    String authors;
+    Boolean optional;
+    String reference;
+    Integer referenceOrder;
+    String title;
+    String year;
+}
+
+class executionCourse.EvaluationMethod  {
+    LocalizedString evaluationElements;
+}
+
+class executionCourse.Evaluation  {
+    String publishmentMessage;
+}
+
+class executionCourse.LessonPlanning  {
+    ShiftType lessonType;
+    Integer orderOfPlanning;
+    LocalizedString planning;
+    LocalizedString title;
+}
+
+class degree.DegreeSite extends .org.fenixedu.cms.domain.Site {
+    protected String degreeId;
+}
+
+class Summary {
+    protected String summaryId;
+}
 
 relation SummaryPost {
-	.org.fenixedu.academic.domain.Summary playsRole;
+	Summary playsRole summary;
 	.org.fenixedu.cms.domain.Post playsRole post;
 }
 
-relation DegreeSiteHasDegree {
-    degree.DegreeSite playsRole site {
-        multiplicity 0..1;
+relation CourseBibliographicReference {
+    executionCourse.BibliographicReference playsRole associatedBibliographicReferences {
+        multiplicity *;
     }
-    .org.fenixedu.academic.domain.Degree playsRole degree {
-        multiplicity 1..1;
+    executionCourse.ExecutionCourseSite playsRole executionCourse;
+}
+
+relation CourseEvaluationMethod {
+    executionCourse.EvaluationMethod playsRole evaluationMethod;
+    executionCourse.ExecutionCourseSite playsRole executionCourse;
+}
+
+relation EvaluationExecutionCourse {
+    executionCourse.ExecutionCourseSite playsRole associatedExecutionCourses {
+        multiplicity *;
+    }
+    executionCourse.Evaluation playsRole associatedEvaluations {
+        multiplicity *;
     }
 }
 
-relation ExecutionCourseFenixEduExecutionCourseSite {
-	executionCourse.ExecutionCourseSite playsRole site {
-	    multiplicity 0..1;
-    }
-	.org.fenixedu.academic.domain.ExecutionCourse playsRole executionCourse {
-	    multiplicity 1..1;
+relation LessonPlanningExecutionCourse {
+    executionCourse.ExecutionCourseSite playsRole executionCourse;
+    executionCourse.LessonPlanning playsRole lessonPlannings {
+        multiplicity *;
     }
 }
+
+

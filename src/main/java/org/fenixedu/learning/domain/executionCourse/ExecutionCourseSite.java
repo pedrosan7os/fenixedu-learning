@@ -18,20 +18,11 @@
  */
 package org.fenixedu.learning.domain.executionCourse;
 
-import static com.google.common.base.Joiner.on;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
-import org.fenixedu.academic.domain.ExecutionCourse;
-import org.fenixedu.academic.domain.accessControl.StudentGroup;
-import org.fenixedu.academic.domain.accessControl.StudentSharingDegreeOfCompetenceOfExecutionCourseGroup;
-import org.fenixedu.academic.domain.accessControl.StudentSharingDegreeOfExecutionCourseGroup;
-import org.fenixedu.academic.domain.accessControl.TeacherGroup;
-import org.fenixedu.academic.util.MultiLanguageString;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.groups.AnyoneGroup;
 import org.fenixedu.bennu.core.groups.Group;
@@ -46,47 +37,20 @@ import org.fenixedu.cms.domain.Category;
 import org.fenixedu.cms.domain.wraps.Wrap;
 import org.fenixedu.commons.i18n.LocalizedString;
 
-import pt.ist.fenixframework.Atomic;
-import pt.ist.fenixframework.DomainObject;
-
 import com.google.common.collect.Lists;
 
 public class ExecutionCourseSite extends ExecutionCourseSite_Base {
 
-    public ExecutionCourseSite(ExecutionCourse executionCourse) {
-        checkNotNull(executionCourse);
-        setExecutionCourse(executionCourse);
+    public ExecutionCourseSite(String courseId, LocalizedString name, LocalizedString description) {
+        setExecutionCourseId(courseId);
+        setName(name);
+        setDescription(description);
         setPublished(true);
         setFolder(folderForPath(PortalConfiguration.getInstance().getMenu(), "courses"));
-        setSlug(on("-").join(getExecutionCourse().getSigla(), getExecutionCourse().getExternalId()));
+        setSlug(UUID.randomUUID().toString());
         setCanAdminGroup(NobodyGroup.get());
         setCanPostGroup(NobodyGroup.get());
         setBennu(Bennu.getInstance());
-
-        executionCourse.setSiteUrl(getFullUrl());
-    }
-
-    @Override
-    public LocalizedString getName() {
-        return getExecutionCourse().getNameI18N().toLocalizedString();
-    }
-
-    @Override
-    public LocalizedString getDescription() {
-        return getObjectives().orElseGet(this::getName);
-    }
-
-    private Optional<LocalizedString> getObjectives() {
-        return getExecutionCourse().getCompetenceCourses().stream()
-                .map(competenceCourse -> competenceCourse.getObjectivesI18N(getExecutionCourse().getExecutionPeriod()))
-                .filter(Objects::nonNull).map(MultiLanguageString::toLocalizedString).findFirst();
-    }
-
-    @Override
-    @Atomic
-    public void delete() {
-        setExecutionCourse(null);
-        super.delete();
     }
 
     private CMSFolder folderForPath(MenuContainer parent, String path) {
@@ -113,11 +77,6 @@ public class ExecutionCourseSite extends ExecutionCourseSite_Base {
         groups.add(StudentSharingDegreeOfExecutionCourseGroup.get(getExecutionCourse()));
         groups.add(StudentSharingDegreeOfCompetenceOfExecutionCourseGroup.get(getExecutionCourse()));
         return groups;
-    }
-
-    @Override
-    public DomainObject getObject() {
-        return getExecutionCourse();
     }
 
     public Stream<Wrap> getCategoriesToShow() {

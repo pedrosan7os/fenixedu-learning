@@ -18,9 +18,6 @@
  */
 package org.fenixedu.learning.domain.executionCourse.components;
 
-import java.util.Locale;
-
-import org.fenixedu.academic.domain.ExecutionCourse;
 import org.fenixedu.cms.domain.Page;
 import org.fenixedu.cms.domain.component.ComponentType;
 import org.fenixedu.cms.rendering.TemplateContext;
@@ -32,21 +29,9 @@ public class EvaluationMethodsComponent extends BaseExecutionCourseComponent {
 
     @Override
     public void handle(Page page, TemplateContext componentContext, TemplateContext globalContext) {
-        ExecutionCourse executionCourse = ((ExecutionCourseSite) page.getSite()).getExecutionCourse();
-        LocalizedString evaluationMethod = getEvaluationMethod(executionCourse);
-        globalContext.put("evaluationMethod", executionCourse.getEvaluationMethod());
-        globalContext.put("evaluationMethodText", evaluationMethod.getContent());
+        ExecutionCourseSite site = ((ExecutionCourseSite) page.getSite());
+        LocalizedString evaluationMethod =
+                site.getEvaluationMethod() != null ? site.getEvaluationMethod().getEvaluationElements() : null;
         globalContext.put("evaluationMethodLocalizedString", evaluationMethod);
-    }
-
-    private LocalizedString getEvaluationMethod(ExecutionCourse executionCourse) {
-        if (executionCourse.getEvaluationMethod() != null) {
-            return executionCourse.getEvaluationMethod().getEvaluationElements().toLocalizedString();
-        } else {
-            String competenceMethod =
-                    !executionCourse.getCompetenceCourses().isEmpty() ? executionCourse.getCompetenceCourses().iterator().next()
-                            .getEvaluationMethod() : "";
-            return new LocalizedString(Locale.getDefault(), competenceMethod);
-        }
     }
 }

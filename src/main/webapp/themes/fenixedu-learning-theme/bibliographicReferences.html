@@ -21,20 +21,18 @@
 
 {% block content %}
     <h3>{{ i18n('resources.ApplicationResources', 'message.recommendedBibliography') }}</h3>
-    {% if (mainReferences is not empty) or (nonOptionalReferences is not empty) %}
+    {% if (mainReferences is not empty) %}
         <ul>
             {{ referencesList(mainReferences) }}
-            {{ referencesList(nonOptionalReferences) }}
         </ul>
     {% else %}
         <i>{{ i18n('resources.ApplicationResources', 'label.noPrimaryBibliographicReference') }}</i>
     {% endif %}
 
     <h3>{{ i18n('resources.ApplicationResources', 'message.optionalBibliography') }}</h3>
-    {% if (secondaryReferences is not empty) or (optionalReferences is not empty) %}
+    {% if (secondaryReferences is not empty) %}
         <ul>
             {{ referencesList(secondaryReferences) }}
-            {{ referencesList(optionalReferences) }}
         </ul>
     {% else %}
         <i>{{ i18n('resources.ApplicationResources', 'label.noSecondaryBibliographicReference') }}</i>
